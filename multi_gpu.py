@@ -36,6 +36,7 @@ def input_fn(**kwargs):
         return (np.random.uniform(size=(100,),low=0,high=1).astype(np.float32),
                     np.random.randint(0,2,1).astype(np.float32))
     dataset = tf.data.Dataset.from_tensor_slices(tf.random.uniform((kwargs['batch_size']*kwargs['n_iters'],)))
+    ''' num_parallel_calls controls parallelism in data pipeline'''
     dataset = dataset.map(lambda x :tf.py_func(_preprocessor, [x],[tf.float32,tf.float32], stateful=False),num_parallel_calls=1)
     dataset = dataset.map(lambda *parts :(tf.reshape(parts[0],(100,)),{'gt_class':tf.reshape(parts[1],(1,))}),num_parallel_calls=1)
     dataset = dataset.batch(kwargs['batch_size'])
